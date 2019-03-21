@@ -4,16 +4,20 @@ Modified version of the Integrative Genomics Viewer - desktop genome visualizati
 
 This modified version of IGV adds a few minor but vital capabilities to batch-mode IGV. It particular, it adds a few useful batch commands:
 
-* panelWidth: This sets the panel width in nominal px. Note that the actual pixel width will be modified by the resolution factor, below.
-* resolutionFactor: This increases the pixel density, producing larger images without shrinking the elements.
-* region: this marks a specified region as a "Region of interest"
+ * panelWidth: This sets the panel width in nominal px. Note that the actual pixel width will be modified by the resolution factor, below.
+ * resolutionFactor: This increases the pixel density, producing larger images without shrinking the elements.
+ * region: this marks a specified region as a "Region of interest"
 
-In addition, headlessIGV is designed to work with [igvSnap](https://github.com/hartleys/igvSnap), a wrapper program that simplifies the generation of IGV batch scripts.
+*headlessIGV is primarily intended to be used with [igvSnap](https://github.com/hartleys/igvSnap),* a wrapper program that simplifies the generation of IGV batch scripts.
 
-### Building
+You can download headlessIGV [here](https://raw.githubusercontent.com/hartleys/headlessIGV/master/headlessIGV.0.0.31.zip).
+
+--------------------------
+
+# Building
 
 These instructions are meant for developers interested in working on the IGV code.  For normal use,
-we recommend the pre-built jar file: [](https://raw.githubusercontent.com/hartleys/headlessIGV/master/igv.jar)
+we recommend the pre-built jar file, available in the link above.
 
 Builds are executed from the IGV project directory.  Files will be created in the 'build' subdirectory.
 You may need to execute 'gradle wrapper' to set up the gradle wrapper.  This should be necessary the 
