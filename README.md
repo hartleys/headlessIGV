@@ -1,13 +1,19 @@
-# igv
-[![Build Status](https://travis-ci.org/igvteam/igv.svg?branch=master)](https://travis-ci.org/igvteam/igv)
+# headlessIGV
 
-Integrative Genomics Viewer - desktop genome visualization tool for Mac, Windows, and Linux.
+Modified version of the Integrative Genomics Viewer - desktop genome visualization tool for Mac, Windows, and Linux.
+
+This modified version of IGV adds a few minor but vital capabilities to batch-mode IGV. It particular, it adds a few useful batch commands:
+
+* panelWidth: This sets the panel width in nominal px. Note that the actual pixel width will be modified by the resolution factor, below.
+* resolutionFactor: This increases the pixel density, producing larger images without shrinking the elements.
+* region: this marks a specified region as a "Region of interest"
+
+In addition, headlessIGV is designed to work with [igvSnap](https://github.com/hartleys/igvSnap), a wrapper program that simplifies the generation of IGV batch scripts.
 
 ### Building
 
 These instructions are meant for developers interested in working on the IGV code.  For normal use,
-we recommend the pre-built releases available at [http://software.broadinstitute.org/software/igv/download](http://software.broadinstitute.org/software/igv/download).
-
+we recommend the pre-built jar file: [](https://raw.githubusercontent.com/hartleys/headlessIGV/master/igv.jar)
 
 Builds are executed from the IGV project directory.  Files will be created in the 'build' subdirectory.
 You may need to execute 'gradle wrapper' to set up the gradle wrapper.  This should be necessary the 
