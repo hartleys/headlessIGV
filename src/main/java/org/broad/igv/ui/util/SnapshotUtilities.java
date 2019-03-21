@@ -72,10 +72,18 @@ public class SnapshotUtilities {
      * We need to use a static for max panel height,  or alternatively much refactoring
      */
     private static int maxPanelHeight = DEFAULT_MAX_PANEL_HEIGHT;
+    private static int panelWidth = 1920;
 
     public static int getMaxPanelHeight() {
         return maxPanelHeight;
     }
+    
+    public static void setPanelWidth(int w){
+		panelWidth = w;
+	}
+	public static int getPanelWidth(){
+		return panelWidth;
+	}
 
     public static void setMaxPanelHeight(int h) {
         maxPanelHeight = h;
@@ -84,18 +92,162 @@ public class SnapshotUtilities {
     // Treat this class as a singleton, no instances allowed
     private SnapshotUtilities() {
     }
+    public static void reportSizing(String reportPrefix, javax.swing.JRootPane jrp, Component component){
+		 UIUtilities.invokeAndWaitOnEventThread(() -> {
+		    log.info("["+reportPrefix+"]:");
+        	log.info("["+reportPrefix+"] jrp.dim     dim("+jrp.getHeight()+"/"+jrp.getWidth()+")");
+            log.info("["+reportPrefix+"] mainPanel   dim("+((MainPanel) component).getHeight()+"/"+((MainPanel) component).getWidth()+")");
+            log.info("["+reportPrefix+"] applicPanel dim("+((MainPanel) component).applicationHeaderPanel.getHeight()+"/"+((MainPanel) component).applicationHeaderPanel.getWidth()+")");
+		});
+	}
+    public static void reportSizingNoThread(String reportPrefix, javax.swing.JRootPane jrp, Component component){
+		    log.info("["+reportPrefix+"]:");
+        	log.info("["+reportPrefix+"] jrp.dim     dim("+jrp.getHeight()+"/"+jrp.getWidth()+")");
+            log.info("["+reportPrefix+"] mainPanel   dim("+((MainPanel) component).getHeight()+"/"+((MainPanel) component).getWidth()+")");
+            log.info("["+reportPrefix+"] applicPanel dim("+((MainPanel) component).applicationHeaderPanel.getHeight()+"/"+((MainPanel) component).applicationHeaderPanel.getWidth()+")");
+	}
 
 
     public static String doComponentSnapshot(Component component, File file, SnapshotFileChooser.SnapshotFileType type, boolean paintOffscreen) throws IOException {
-
+        log.info("DEBUG-doComponentSnapshot(): component.getheight/width: "+component.getHeight()+"/"+component.getWidth());
+        javax.swing.JRootPane jrp = org.broad.igv.ui.IGV.getRootPane();
+        log.info("DEBUG-doComponentSnapshot(): jrp.getheight/width: "+jrp.getHeight()+"/"+jrp.getWidth());
         //TODO Should really make this work for more components
         if (paintOffscreen && !(component instanceof Paintable)) {
             log.error("Component cannot be painted offscreen. Performing onscreen paint");
             paintOffscreen = false;
         }
 
-        if (paintOffscreen) {
+        UIUtilities.invokeAndWaitOnEventThread(() -> {
+            Rectangle rect = component.getBounds();
+            rect.x = 0;
+            rect.y = 0;
+            rect.width = getPanelWidth();
+            rect.height = ((MainPanel) component).getOffscreenImageHeight();
+            reportSizing("00-initial",jrp,component);
+          	  jrp.setBounds(rect);
+            reportSizingNoThread("01-JRP size set",jrp,component);
+            
+            log.info("component IS MainPanel!");
+            	rect.x = 0;
+           	 	rect.y = 0;
+           		rect.width = getPanelWidth();
+            	rect.height = ((MainPanel) component).getOffscreenImageHeight();
+                ((MainPanel) component).setBounds(rect);
+            reportSizingNoThread("01-MainPanel Size Set",jrp,component);
+                 //Rectangle rr2 = ((MainPanel) component).applicationHeaderPanel.getBounds();
+                 //rr2.width = getPanelWidth() - 20;
+                 //rr2.height = 256;
+                 //((MainPanel) component).applicationHeaderPanel.setBounds(rr2);
+                 
+			reportSizingNoThread("01A",jrp,component);
+                          //((MainPanel) component).applicationHeaderPanel.setSize(new Dimension(getPanelWidth()-20,256));
+                          //((MainPanel) component).applicationHeaderPanel.setBounds(rr2);
+                          ((MainPanel) component).applicationHeaderPanel.setMinimumSize(new Dimension(getPanelWidth()-20,256));
+                          ((MainPanel) component).applicationHeaderPanel.setSize(new Dimension(getPanelWidth()-20,256));
+                          reportSizingNoThread("01B",jrp,component);
+                          //rect.x = 0;
+			              //rect.y = 0;
+			              //rect.width = getPanelWidth();
+                          //rect.height = ((MainPanel) component).getOffscreenImageHeight();
+                          //((MainPanel) component).setBounds(rect);
+            reportSizingNoThread("02-appPanel Size Set",jrp,component);
 
+              //UIUtilities.invokeAndWaitOnEventThread(() -> {
+				 reportSizingNoThread("02A",jrp,component);
+				 //((MainPanel) component).applicationHeaderPanel.setSize(new Dimension(getPanelWidth()-20,256));
+                 //Rectangle rr2 = ((MainPanel) component).applicationHeaderPanel.getBounds();
+                 //rr2.width = getPanelWidth() - 20;
+                 //rr2.height = 256;
+                 //((MainPanel) component).applicationHeaderPanel.setBounds(rr2);
+				 
+				 reportSizingNoThread("02B",jrp,component);
+                 ((MainPanel) component).applicationHeaderPanel.doLayout();
+				 reportSizingNoThread("02C",jrp,component);
+		      //});
+            reportSizingNoThread("03-after appPanel.doLayout()",jrp,component);
+
+              //UIUtilities.invokeAndWaitOnEventThread(() -> {
+                          rect.x = 0;
+			              rect.y = 0;
+			              rect.width = getPanelWidth();
+                          rect.height = ((MainPanel) component).getOffscreenImageHeight();
+                          ((MainPanel) component).setBounds(rect);       
+				//	  });
+            reportSizingNoThread("04-after mainPanel set again",jrp,component);
+
+			  //UIUtilities.invokeAndWaitOnEventThread(() -> {
+                ((MainPanel) component).doLayout();
+		      //});
+            reportSizingNoThread("05-after mainPanel.doLayout()",jrp,component);
+
+              /*log.info("[after doLayout()] DEBUG-doComponentSnapshot(): component.getheight/width: "+component.getHeight()+"/"+component.getWidth());
+              log.info("[after doLayout()] applicationHeaderPanel dim("+((MainPanel) component).applicationHeaderPanel.getWidth()+"/"+((MainPanel) component).applicationHeaderPanel.getHeight()+")");
+              log.info("[after doLayout()] DEBUG-doComponentSnapshot(): component.getheight/width: "+component.getHeight()+"/"+component.getWidth());
+              UIUtilities.invokeAndWaitOnEventThread(() -> {
+                          rect.x = 0;
+			              rect.y = 0;
+			              rect.width = getPanelWidth();
+                          rect.height = ((MainPanel) component).getOffscreenImageHeight();
+                          ((MainPanel) component).setBounds(rect);
+					  })*/
+              //UIUtilities.invokeAndWaitOnEventThread(() -> {
+                ((MainPanel) component).revalidate();
+		      //});
+            reportSizingNoThread("06-after mainPanel.revalidate()",jrp,component);
+	    });
+        reportSizing("07-AFTER ALL:",jrp,component);
+
+        int width = component.getWidth();
+        int height = component.getHeight();
+        log.info("DEBUG-doComponentSnapshot(): height/width: "+height+"/"+width);
+
+        // Call appropriate converter
+        String format = null;
+        String[] exts = null;
+        switch (type) {
+            case SVG:
+                //log.debug("Exporting svg screenshot");
+                exportScreenshotSVG(component, file, width, height, paintOffscreen);
+                //exportScreenshotVector2D(component, file, paintOffscreen);
+                break;
+            case JPEG:
+                format = "jpeg";
+                exts = new String[]{".jpg", ".jpeg"};
+                break;
+            case PNG:
+                //format = "png";
+                //exts = new String[]{"." + format};
+                exportScreenshotPNG(component, file, width, height, paintOffscreen);
+                break;
+            case EPS:
+                exportScreenshotEpsGraphics(component, file, width, height, paintOffscreen);
+                //exportScreenshotEpsGraphicsNoRef(component, file, paintOffscreen);
+                break;
+        }
+        if (format != null && exts != null) {
+			log.info("DEBUG-doComponentSnapshot(): entering: exportScreenShotBufferedImage");
+            exportScreenShotBufferedImage(component, file, width, height, exts, format, paintOffscreen);
+        }
+        return "OK";
+    }
+
+
+    public static String doComponentSnapshot_doesntworkforbizarrereasons(Component component, File file, SnapshotFileChooser.SnapshotFileType type, boolean paintOffscreen) throws IOException {
+        log.info("DEBUG-doComponentSnapshot(): component.getheight/width: "+component.getHeight()+"/"+component.getWidth());
+        javax.swing.JRootPane jrp = org.broad.igv.ui.IGV.getRootPane();
+        log.info("DEBUG-doComponentSnapshot(): jrp.getheight/width: "+jrp.getHeight()+"/"+jrp.getWidth());
+        //TODO Should really make this work for more components
+        if (paintOffscreen && !(component instanceof Paintable)) {
+            log.error("Component cannot be painted offscreen. Performing onscreen paint");
+            paintOffscreen = false;
+        }
+        //component.setSize( new Dimension(getPanelWidth(),1200));
+        //log.info("after component.setSize(): component.getheight/width: "+component.getHeight()+"/"+component.getWidth());
+        //log.info("DEBUG-doComponentSnapshot(): jrp.getheight/width: "+jrp.getHeight()+"/"+jrp.getWidth());
+
+        //if (paintOffscreen) {
+/*
             Rectangle rect = component.getBounds();
 
             if (component instanceof MainPanel) {
@@ -113,10 +265,140 @@ public class SnapshotUtilities {
             rect.height -= dy;
 
             component.setBounds(rect);
-        }
+            
+            */
+
+            
+            Rectangle rect = component.getBounds();
+            rect.x = 0;
+            rect.y = 0;
+            rect.width = getPanelWidth();
+            rect.height = ((MainPanel) component).getOffscreenImageHeight();
+            reportSizing("00-initial",jrp,component);
+        	UIUtilities.invokeAndWaitOnEventThread(() -> {
+          	  jrp.setBounds(rect);
+			});
+            reportSizing("01-JRP size set",jrp,component);
+            
+            //if (component instanceof MainPanel) {
+              log.info("component IS MainPanel!");
+              UIUtilities.invokeAndWaitOnEventThread(() -> {
+            	rect.x = 0;
+           	 	rect.y = 0;
+           		rect.width = getPanelWidth();
+            	rect.height = ((MainPanel) component).getOffscreenImageHeight();
+                ((MainPanel) component).setBounds(rect);
+		      });
+            reportSizing("01-MainPanel Size Set",jrp,component);
+              UIUtilities.invokeAndWaitOnEventThread(() -> {
+                 //Rectangle rr2 = ((MainPanel) component).applicationHeaderPanel.getBounds();
+                 //rr2.width = getPanelWidth() - 20;
+                 //rr2.height = 256;
+                 //((MainPanel) component).applicationHeaderPanel.setBounds(rr2);
+                 
+				          reportSizingNoThread("01A",jrp,component);
+                          //((MainPanel) component).applicationHeaderPanel.setSize(new Dimension(getPanelWidth()-20,256));
+                          //((MainPanel) component).applicationHeaderPanel.setBounds(rr2);
+                          ((MainPanel) component).applicationHeaderPanel.setMinimumSize(new Dimension(getPanelWidth()-20,256));
+                          ((MainPanel) component).applicationHeaderPanel.setSize(new Dimension(getPanelWidth()-20,256));
+                          reportSizingNoThread("01B",jrp,component);
+                          //rect.x = 0;
+			              //rect.y = 0;
+			              //rect.width = getPanelWidth();
+                          //rect.height = ((MainPanel) component).getOffscreenImageHeight();
+                          //((MainPanel) component).setBounds(rect);
+			  });
+              reportSizing("02-appPanel Size Set",jrp,component);
+
+              UIUtilities.invokeAndWaitOnEventThread(() -> {
+				 reportSizingNoThread("02A",jrp,component);
+				 //((MainPanel) component).applicationHeaderPanel.setSize(new Dimension(getPanelWidth()-20,256));
+                 //Rectangle rr2 = ((MainPanel) component).applicationHeaderPanel.getBounds();
+                 //rr2.width = getPanelWidth() - 20;
+                 //rr2.height = 256;
+                 //((MainPanel) component).applicationHeaderPanel.setBounds(rr2);
+				 
+				 reportSizingNoThread("02B",jrp,component);
+                 ((MainPanel) component).applicationHeaderPanel.doLayout();
+				 reportSizingNoThread("02C",jrp,component);
+		      });
+              reportSizing("03-after appPanel.doLayout()",jrp,component);
+
+              UIUtilities.invokeAndWaitOnEventThread(() -> {
+                          rect.x = 0;
+			              rect.y = 0;
+			              rect.width = getPanelWidth();
+                          rect.height = ((MainPanel) component).getOffscreenImageHeight();
+                          ((MainPanel) component).setBounds(rect);       
+					  });
+              reportSizing("04-after mainPanel set again",jrp,component);
+
+			  UIUtilities.invokeAndWaitOnEventThread(() -> {
+                ((MainPanel) component).doLayout();
+		      });
+              reportSizing("05-after mainPanel.doLayout()",jrp,component);
+
+              /*log.info("[after doLayout()] DEBUG-doComponentSnapshot(): component.getheight/width: "+component.getHeight()+"/"+component.getWidth());
+              log.info("[after doLayout()] applicationHeaderPanel dim("+((MainPanel) component).applicationHeaderPanel.getWidth()+"/"+((MainPanel) component).applicationHeaderPanel.getHeight()+")");
+              log.info("[after doLayout()] DEBUG-doComponentSnapshot(): component.getheight/width: "+component.getHeight()+"/"+component.getWidth());
+              UIUtilities.invokeAndWaitOnEventThread(() -> {
+                          rect.x = 0;
+			              rect.y = 0;
+			              rect.width = getPanelWidth();
+                          rect.height = ((MainPanel) component).getOffscreenImageHeight();
+                          ((MainPanel) component).setBounds(rect);
+					  })*/
+              UIUtilities.invokeAndWaitOnEventThread(() -> {
+                ((MainPanel) component).revalidate();
+		      });
+              reportSizing("06-after mainPanel.revalidate()",jrp,component);
+
+              //log.info("[after revalidate()] DEBUG-doComponentSnapshot(): component.getheight/width: "+component.getHeight()+"/"+component.getWidth());
+              //log.info("[after revalidate()] applicationHeaderPanel dim("+((MainPanel) component).applicationHeaderPanel.getWidth()+"/"+((MainPanel) component).applicationHeaderPanel.getHeight()+")");
+              
+              //((MainPanel) component).repaint();
+              //log.info("[after repaint() MAIN] DEBUG-doComponentSnapshot(): component.getheight/width: "+component.getHeight()+"/"+component.getWidth());
+              //log.info("[after repaint() MAIN] applicationHeaderPanel dim("+((MainPanel) component).applicationHeaderPanel.getWidth()+"/"+((MainPanel) component).applicationHeaderPanel.getHeight()+")");
+              
+              //log.info("getAttributePanelWidth(): "+((MainPanel) component).getAttributePanelWidth() );
+              //log.info("calculateAttributeWidth(): "+((MainPanel) component).calculateAttributeWidth() );
+              //log.info("calculateAttributeWidth(): "+((MainPanel) component).applicationHeaderPanel.getWidth() );
+
+              //((MainPanel) component).layoutFrames();
+              //log.info("[after layoutFrames()] DEBUG-doComponentSnapshot(): component.getheight/width: "+component.getHeight()+"/"+component.getWidth());
+              //log.info("[after layoutFrames()] applicationHeaderPanel dim("+((MainPanel) component).applicationHeaderPanel.getWidth()+"/"+((MainPanel) component).applicationHeaderPanel.getHeight()+")");
+              //log.info("[after layoutFrames()] DEBUG-doComponentSnapshot(): component.getheight/width: "+component.getHeight()+"/"+component.getWidth());
+
+              /*((MainPanel) component).revalidate();
+              log.info("[after revalidate()] DEBUG-doComponentSnapshot(): component.getheight/width: "+component.getHeight()+"/"+component.getWidth());
+              log.info("[after revalidate()] applicationHeaderPanel dim("+((MainPanel) component).applicationHeaderPanel.getWidth()+"/"+((MainPanel) component).applicationHeaderPanel.getHeight()+")");
+              ((MainPanel) component).repaint();
+              log.info("[after repaint() MAIN] DEBUG-doComponentSnapshot(): component.getheight/width: "+component.getHeight()+"/"+component.getWidth());
+              log.info("[after repaint() MAIN] applicationHeaderPanel dim("+((MainPanel) component).applicationHeaderPanel.getWidth()+"/"+((MainPanel) component).applicationHeaderPanel.getHeight()+")");
+              ((MainPanel) component).igv.getContentPane().repaint();
+              log.info("[after repaint() CONTENTPANE] DEBUG-doComponentSnapshot(): component.getheight/width: "+component.getHeight()+"/"+component.getWidth());
+              log.info("[after repaint() CONTENTPANE] applicationHeaderPanel dim("+((MainPanel) component).applicationHeaderPanel.getWidth()+"/"+((MainPanel) component).applicationHeaderPanel.getHeight()+")");
+
+              ((MainPanel) component).layoutFrames();
+              ((MainPanel) component).revalidate();
+              ((MainPanel) component).repaint();
+              ((MainPanel) component).igv.getContentPane().repaint();
+              
+              log.info("[after layout/reval/repaint() x2] DEBUG-doComponentSnapshot(): component.getheight/width: "+component.getHeight()+"/"+component.getWidth());
+              log.info("[after layout/reval/repaint() x2] applicationHeaderPanel dim("+((MainPanel) component).applicationHeaderPanel.getWidth()+"/"+((MainPanel) component).applicationHeaderPanel.getHeight()+")");
+              
+              log.info("revalidated and repainted!");*/
+		    //} else {
+		    //  log.info("component IS NOT MainPanel!");
+			//}
+            
+
+        //}
+        log.info("DEBUG-doComponentSnapshot(): component.getheight/width: "+component.getHeight()+"/"+component.getWidth());
 
         int width = component.getWidth();
         int height = component.getHeight();
+        log.info("DEBUG-doComponentSnapshot(): height/width: "+height+"/"+width);
 
         // Call appropriate converter
         String format = null;
@@ -132,8 +414,9 @@ public class SnapshotUtilities {
                 exts = new String[]{".jpg", ".jpeg"};
                 break;
             case PNG:
-                format = "png";
-                exts = new String[]{"." + format};
+                //format = "png";
+                //exts = new String[]{"." + format};
+                exportScreenshotPNG(component, file, width, height, paintOffscreen);
                 break;
             case EPS:
                 exportScreenshotEpsGraphics(component, file, width, height, paintOffscreen);
@@ -141,6 +424,7 @@ public class SnapshotUtilities {
                 break;
         }
         if (format != null && exts != null) {
+			log.info("DEBUG-doComponentSnapshot(): entering: exportScreenShotBufferedImage");
             exportScreenShotBufferedImage(component, file, width, height, exts, format, paintOffscreen);
         }
         return "OK";
@@ -268,12 +552,66 @@ public class SnapshotUtilities {
         }
     }
 
+
+    private static void exportScreenshotPNG(Component target, File selectedFile, int width, int height, boolean paintOffscreen) throws IOException {
+        log.info("exportScreenshotPNG(P1)...");
+
+        String format = "png";
+        selectedFile = fixFileExt(selectedFile, new String[]{format}, format);
+        Rectangle rect = new Rectangle(0, 0, width, height);
+        log.info("exportScreenshotPNG(P2)...");
+
+        BufferedImage bufImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        log.info("exportScreenshotPNG(P3)...");
+
+        Graphics2D g = bufImg.createGraphics();
+        log.info("exportScreenshotPNG(P4)...");
+        paintImage(target,g,width,height,paintOffscreen);
+        log.info("exportScreenshotPNG(P5)...");
+
+        log.info("exportScreenshotPNG(P5): Writing image to " + selectedFile.getAbsolutePath());
+        ImageIO.write(bufImg, format, selectedFile);
+        log.info("exportScreenshotPNG(P6)");
+        
+/*
+        // Create an instance of org.w3c.dom.Document.                                                                                      
+        DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
+        String svgNS = "http://www.w3.org/2000/svg";
+        Document document = domImpl.createDocument(svgNS, format, null);
+
+        // Write image data into document                                                                                                   
+        SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
+
+        paintImage(target, svgGenerator, width, height, paintOffscreen);
+
+        Writer out = null;
+        try {
+            // Finally, stream out SVG to the standard output using                                                                         
+            // UTF-8 encoding.                                                                                                              
+            boolean useCSS = true; // we want to use CSS style attributes                                                                   
+            out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(selectedFile), "UTF-8"));
+            svgGenerator.stream(out, useCSS);
+        } finally {
+            if (out != null) try {
+                out.close();
+            } catch (IOException e) {
+                log.error("Error closing svg file", e);
+            }
+        }*/
+    }
+
+
+
     private static void paintImage(Component target, Graphics2D g, int width, int height, boolean paintOffscreen) {
-        log.debug("Painting to target " + target + " , offscreen " + paintOffscreen);
+        log.info("DEBUG-paintImage(P1): height/width: "+height+"/"+width);
+        log.info("DEBUG-paintImage(P1): target.height/width: "+target.getHeight()+"/"+target.getWidth());
+        log.info("DEBUG-paintImage(P1): Painting to target " + target + " , offscreen " + paintOffscreen);
         if (paintOffscreen) {
+            log.info("DEBUG-paintImage(P2A): target.height/width: "+target.getHeight()+"/"+target.getWidth());
             Rectangle rect = new Rectangle(0, 0, width, height);
             ((Paintable) target).paintOffscreen(g, rect);
         } else {
+            log.info("DEBUG-paintImage(P2B): target.height/width: "+target.getHeight()+"/"+target.getWidth());
             target.paintAll(g);
         }
     }
@@ -294,7 +632,7 @@ public class SnapshotUtilities {
                                                       String[] allowedExts, String format, boolean paintOffscreen) throws IOException {
         BufferedImage image = getDeviceCompatibleImage(width, height);
         Graphics2D g = image.createGraphics();
-
+        log.info("DEBUG-exportScreenShotBufferedImage(): width/height: "+width+"/"+height);
         paintImage(target, g, width, height, paintOffscreen);
 
         selectedFile = fixFileExt(selectedFile, allowedExts, format);
@@ -368,8 +706,17 @@ public class SnapshotUtilities {
     public static BufferedImage getDeviceCompatibleImage(int width, int height) {
 
         GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        log.info("getDeviceCompatibleImage(): graphicsEnvironment.getScreenDevices().length: "+graphicsEnvironment.getScreenDevices().length);
         GraphicsDevice screenDevice = graphicsEnvironment.getDefaultScreenDevice();
+        log.info("getDeviceCompatibleImage(): screenDevice.getConfigurations().length: "+screenDevice.getConfigurations().length);
+        GraphicsConfiguration[] configArray = screenDevice.getConfigurations();
+        for(int i=0; i < configArray.length; i++){
+			log.info("getDeviceCompatibleImage(): graphicConfigurations["+i+"].getColorMode(): "+configArray[i].getColorModel().toString());
+		}
+        
         GraphicsConfiguration graphicConfiguration = screenDevice.getDefaultConfiguration();
+        log.info("getDeviceCompatibleImage(): graphicConfiguration.getColorMode(): "+graphicConfiguration.getColorModel().toString());
+
         BufferedImage image = graphicConfiguration.createCompatibleImage(width, height);
 
         return image;

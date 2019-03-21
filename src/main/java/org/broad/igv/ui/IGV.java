@@ -511,9 +511,10 @@ public class IGV implements IGVEventObserver {
      * @param panelSizeMap  scrollpane -> height in pixels
      */
     public void resetPanelHeights(Map<TrackPanelScrollPane, Integer> trackCountMap, Map<TrackPanelScrollPane, Integer> panelSizeMap) {
+       log.info("call:resetPanelHeights()");
 
         UIUtilities.invokeAndWaitOnEventThread(() -> {
-
+            log.info("OnEventThread:resetPanelHeights()");
             double totalHeight = 0;
             for (TrackPanel tp : getTrackPanels()) {
                 TrackPanelScrollPane sp = tp.getScrollPane();
@@ -728,7 +729,7 @@ public class IGV implements IGVEventObserver {
      */
     public String createSnapshotNonInteractive(Component target, File file, boolean paintOffscreen) throws IOException {
 
-        log.debug("Creating snapshot: " + file.getName());
+        log.info("Creating snapshot: " + file.getName());
 
         String extension = FileUtils.getFileExtension(file.getAbsolutePath());
 
@@ -755,6 +756,7 @@ public class IGV implements IGVEventObserver {
         //boolean doubleBuffered = RepaintManager.currentManager(contentPane).isDoubleBufferingEnabled();
         try {
             setExportingSnapshot(true);
+            log.info("doComponentSnapshot() call...");
             message = SnapshotUtilities.doComponentSnapshot(target, file, type, paintOffscreen);
         } catch (IOException e) {
             exc = e;
@@ -762,7 +764,7 @@ public class IGV implements IGVEventObserver {
         } finally {
             setExportingSnapshot(false);
         }
-        log.debug("Finished creating snapshot: " + file.getName());
+        log.info("Finished creating snapshot: " + file.getName());
         if (exc != null) throw exc;
 
 
@@ -1277,6 +1279,7 @@ public class IGV implements IGVEventObserver {
     }
 
     public void layoutMainPanel() {
+		log.info("layoutMainPanel()");
         contentPane.getMainPanel().doLayout();
     }
 
@@ -2353,9 +2356,9 @@ public class IGV implements IGVEventObserver {
      * might execute before the data from a previous command has loaded.
      */
     public void revalidateTrackPanels() {
-
+         log.info("call:revalidateTrackPanels()");
         UIUtilities.invokeOnEventThread(() -> {
-
+            log.info("invokeOnEventThread:revalidateTrackPanels()");
             if (Globals.isBatch()) {
                 contentPane.revalidateTrackPanels();
                 rootPane.paintImmediately(rootPane.getBounds());

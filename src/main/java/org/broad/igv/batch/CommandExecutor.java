@@ -122,6 +122,7 @@ public class CommandExecutor {
                 result = setSnapshotDirectory(param1);
             } else if (cmd.equalsIgnoreCase("snapshot")) {
                 String filename = param1;
+                log.info("Executor: executing snapshot...");
                 result = createSnapshot(filename, param2);
             } else if ((cmd.equalsIgnoreCase("loadfile") || cmd.equalsIgnoreCase("load")) && param1 != null) {
                 result = load(param1, param2, param3, param4);
@@ -155,6 +156,8 @@ public class CommandExecutor {
                 result = this.setLogScale(param1, param2);
             } else if (cmd.equalsIgnoreCase("maxpanelheight") && param1 != null) {
                 return setMaxPanelHeight(param1);
+            } else if (cmd.equalsIgnoreCase("panelWidth") && param1 != null) {
+                return setPanelWidth(param1);
             } else if (cmd.equalsIgnoreCase("tofront")) {
                 return UIUtilities.bringToFront();
             } else if (cmd.equalsIgnoreCase("viewaspairs")) {
@@ -336,6 +339,16 @@ public class CommandExecutor {
         try {
             Integer h = Integer.parseInt(param1.trim());
             SnapshotUtilities.setMaxPanelHeight(h);
+            return "OK";
+        } catch (NumberFormatException e) {
+            return "ERROR - max panel height value ('" + param1 + ".) must be an integer number";
+        }
+    }
+//setPanelWidth
+    private String setPanelWidth(String param1) {
+        try {
+            Integer h = Integer.parseInt(param1.trim());
+            SnapshotUtilities.setPanelWidth(h);
             return "OK";
         } catch (NumberFormatException e) {
             return "ERROR - max panel height value ('" + param1 + ".) must be an integer number";
@@ -881,7 +894,7 @@ public class CommandExecutor {
             log.error(msg);
             return msg;
         }
-
+        log.info("Executor: executing createSnapshotNonInteractive...");
         try {
             return IGV.getInstance().createSnapshotNonInteractive(target, file, true);
         } catch (IOException e) {
