@@ -158,6 +158,8 @@ public class CommandExecutor {
                 return setMaxPanelHeight(param1);
             } else if (cmd.equalsIgnoreCase("panelWidth") && param1 != null) {
                 return setPanelWidth(param1);
+            } else if (cmd.equalsIgnoreCase("resolutionFactor") && param1 != null) {
+                return setCex(param1);
             } else if (cmd.equalsIgnoreCase("tofront")) {
                 return UIUtilities.bringToFront();
             } else if (cmd.equalsIgnoreCase("viewaspairs")) {
@@ -354,6 +356,15 @@ public class CommandExecutor {
             return "ERROR - max panel height value ('" + param1 + ".) must be an integer number";
         }
     }
+    private String setCex(String param1){
+        try {
+            Double h = Double.parseDouble(param1.trim());
+            SnapshotUtilities.setCEX(h);
+            return "OK";
+        } catch (NumberFormatException e) {
+            return "ERROR - max panel height value ('" + param1 + ".) must be an integer number";
+        }
+	}
 
     public String setSleepInterval(String param1) {
         try {

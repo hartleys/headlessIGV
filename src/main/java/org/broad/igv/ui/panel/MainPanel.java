@@ -92,7 +92,7 @@ public class MainPanel extends JPanel implements Paintable {
         addComponentListener(new ComponentListener() {
 
             public void componentResized(ComponentEvent componentEvent) {
-				log.info("MainPanel.componentResized()");
+				log.debug("MainPanel.componentResized()");
                 //revalidate();
                 //repaint();
             }
@@ -157,24 +157,24 @@ public class MainPanel extends JPanel implements Paintable {
     }
     @Override
     public void revalidate() {
-		log.info("MainPanel.revalidate(P1): [MainPanelDim: "+this.getWidth()+" / "+this.getHeight()+"]");
+		log.debug("MainPanel.revalidate(P1): [MainPanelDim: "+this.getWidth()+" / "+this.getHeight()+"]");
 		super.revalidate();
-		log.info("MainPanel.revalidate(P2): [MainPanelDim: "+this.getWidth()+" / "+this.getHeight()+"]");
+		log.debug("MainPanel.revalidate(P2): [MainPanelDim: "+this.getWidth()+" / "+this.getHeight()+"]");
 	}
 
     @Override
     public void doLayout() {
-		log.info("MainPanel.doLayout(P1): [MainPanelDim: "+this.getWidth()+" / "+this.getHeight()+"]");
+		log.debug("MainPanel.doLayout(P1): [MainPanelDim: "+this.getWidth()+" / "+this.getHeight()+"]");
         layoutFrames();
         super.doLayout();
-		log.info("MainPanel.doLayout(P2): [MainPanelDim: "+this.getWidth()+" / "+this.getHeight()+"]");
+		log.debug("MainPanel.doLayout(P2): [MainPanelDim: "+this.getWidth()+" / "+this.getHeight()+"]");
         applicationHeaderPanel.doLayout();
-		log.info("MainPanel.doLayout(P3): [MainPanelDim: "+this.getWidth()+" / "+this.getHeight()+"]");
+		log.debug("MainPanel.doLayout(P3): [MainPanelDim: "+this.getWidth()+" / "+this.getHeight()+"]");
 
         for (TrackPanel tp : getTrackPanels()) {
             tp.getScrollPane().doLayout();
         }
-		log.info("MainPanel.doLayout(P4): [MainPanelDim: "+this.getWidth()+" / "+this.getHeight()+"]");
+		log.debug("MainPanel.doLayout(P4): [MainPanelDim: "+this.getWidth()+" / "+this.getHeight()+"]");
 
     }
 
@@ -442,23 +442,23 @@ public class MainPanel extends JPanel implements Paintable {
     public void layoutFrames() {
         synchronized (getTreeLock()) {
             
-            log.info("layoutFrames(): MainPanelDim: "+this.getWidth()+" / "+this.getHeight());
+            log.debug("layoutFrames(): MainPanelDim: "+this.getWidth()+" / "+this.getHeight());
             
             Insets insets = applicationHeaderPanel.getInsets();
             namePanelX = insets.left;
             
             attributePanelX = namePanelX + namePanelWidth + hgap;
             attributePanelWidth = calculateAttributeWidth();
-            log.info("layoutFrames(): attributePanelX: "+attributePanelX+" / attributePanelWidth: "+attributePanelWidth);
+            log.debug("layoutFrames(): attributePanelX: "+attributePanelX+" / attributePanelWidth: "+attributePanelWidth);
             dataPanelX = attributePanelX + attributePanelWidth + hgap;
-            log.info("layoutFrames(): dataPanelX: "+dataPanelX);
+            log.debug("layoutFrames(): dataPanelX: "+dataPanelX);
 
             java.util.List<ReferenceFrame> frames = FrameManager.getFrames();
             dataPanelWidth = applicationHeaderPanel.getWidth() - insets.right - dataPanelX;
             //dataPanelWidth = 1729;
-            log.info( "layoutFrames(): applicationHeaderPanel.getWidth: "+applicationHeaderPanel.getWidth()+", insets.right: "+insets.right );
+            log.debug( "layoutFrames(): applicationHeaderPanel.getWidth: "+applicationHeaderPanel.getWidth()+", insets.right: "+insets.right );
 
-            log.info( "layoutFrames(): dataPanelWidth: "+dataPanelWidth );
+            log.debug( "layoutFrames(): dataPanelWidth: "+dataPanelWidth );
 
             if (frames.size() == 1) {
                 frames.get(0).setBounds(0, dataPanelWidth);
@@ -548,8 +548,8 @@ public class MainPanel extends JPanel implements Paintable {
 
 
     public void paintOffscreen(Graphics2D g, Rectangle rect) {
-        log.info("DEBUG-paintOffscreen(P1): MainPanelDim["+this.getWidth()+"/"+this.getHeight()+"]");
-        log.info("DEBUG-paintOffscreen(P1): rect["+rect.x+","+rect.y+","+rect.width+","+rect.height+"]");
+        log.debug("DEBUG-paintOffscreen(P1): MainPanelDim["+this.getWidth()+"/"+this.getHeight()+"]");
+        log.debug("DEBUG-paintOffscreen(P1): rect["+rect.x+","+rect.y+","+rect.width+","+rect.height+"]");
         // A hack -- we don't want to paint the background for vector graphics output (EPS and SVG)
         String graphicsClassName = g.getClass().getName().toLowerCase();
         if (!(graphicsClassName.contains("epd") || graphicsClassName.contains("svg"))) {
@@ -561,21 +561,21 @@ public class MainPanel extends JPanel implements Paintable {
         // Header
         int width = applicationHeaderPanel.getWidth();
         int height = applicationHeaderPanel.getHeight();
-        log.info("DEBUG-paintOffscreen(P2): headerDim["+width+","+height+"]");
-        log.info("DEBUG-paintOffscreen(P2): MainPanelDim["+this.getWidth()+"/"+this.getHeight()+"]");
+        log.debug("DEBUG-paintOffscreen(P2): headerDim["+width+","+height+"]");
+        log.debug("DEBUG-paintOffscreen(P2): MainPanelDim["+this.getWidth()+"/"+this.getHeight()+"]");
 
         Graphics2D headerGraphics = (Graphics2D) g.create();
         Rectangle headerRect = new Rectangle(0, 0, width, height);
-        log.info("DEBUG-paintOffscreen(P3): headerRect["+headerRect.x+","+headerRect.y+","+headerRect.width+","+headerRect.height+"]");
-        log.info("DEBUG-paintOffscreen(P3): MainPanelDim["+this.getWidth()+"/"+this.getHeight()+"]");        
+        log.debug("DEBUG-paintOffscreen(P3): headerRect["+headerRect.x+","+headerRect.y+","+headerRect.width+","+headerRect.height+"]");
+        log.debug("DEBUG-paintOffscreen(P3): MainPanelDim["+this.getWidth()+"/"+this.getHeight()+"]");        
         applicationHeaderPanel.paintOffscreen(headerGraphics, headerRect);
         headerGraphics.dispose();
-        log.info("DEBUG-paintOffscreen(P4): MainPanelDim["+this.getWidth()+"/"+this.getHeight()+"]");
+        log.debug("DEBUG-paintOffscreen(P4): MainPanelDim["+this.getWidth()+"/"+this.getHeight()+"]");
 
         // Now loop through track panel
         Rectangle r = centerSplitPane.getBounds();
         g.translate(0, r.y);
-        log.info("DEBUG-paintOffscreen(P5): MainPanelDim["+this.getWidth()+"/"+this.getHeight()+"]");
+        log.debug("DEBUG-paintOffscreen(P5): MainPanelDim["+this.getWidth()+"/"+this.getHeight()+"]");
 
         // Get the components of the center pane and sort by Y position.
         Component[] components = centerSplitPane.getComponents();
@@ -584,7 +584,7 @@ public class MainPanel extends JPanel implements Paintable {
                 return component.getY() - component1.getY();
             }
         });
-        log.info("DEBUG-paintOffscreen(P6): MainPanelDim["+this.getWidth()+"/"+this.getHeight()+"]");
+        log.debug("DEBUG-paintOffscreen(P6): MainPanelDim["+this.getWidth()+"/"+this.getHeight()+"]");
 
         int dy = components[0].getY();
         for (Component c : components) {
@@ -620,7 +620,7 @@ public class MainPanel extends JPanel implements Paintable {
             g2d.dispose();
 
         }
-        log.info("DEBUG-paintOffscreen(P6): MainPanelDim["+this.getWidth()+"/"+this.getHeight()+"]");
+        log.debug("DEBUG-paintOffscreen(P6): MainPanelDim["+this.getWidth()+"/"+this.getHeight()+"]");
 
         //super.paintBorder(g);
 

@@ -68,15 +68,15 @@ public class IGVPanel extends JPanel implements Paintable {
     }
     @Override
     public void setMinimumSize(Dimension minimumSize){
-		log.info("Setting Minimum Size: "+minimumSize.toString() + " of ["+this.toString()+"]");
+		log.debug("Setting Minimum Size: "+minimumSize.toString() + " of ["+this.toString()+"]");
 		super.setMinimumSize(minimumSize);
-		log.info("         MinSize Set: ["+this.toString()+"]");
+		log.debug("         MinSize Set: ["+this.toString()+"]");
 	}
     @Override
     public void setSize(Dimension size){
-		log.info("Setting Minimum Size: "+size.toString() + " of ["+this.toString()+"]");
+		log.debug("Setting Minimum Size: "+size.toString() + " of ["+this.toString()+"]");
 		super.setSize(size);
-		log.info("            Size Set: ["+this.toString()+"]");
+		log.debug("            Size Set: ["+this.toString()+"]");
 	}
 
 
@@ -84,7 +84,7 @@ public class IGVPanel extends JPanel implements Paintable {
     public void doLayout() {
         synchronized (getTreeLock()) {
 
-            log.info("Layout: " + toString());
+            log.debug("Layout: " + toString());
 
             int h = getHeight(); //getPreferredSize().height;
             Component[] children = getComponents();

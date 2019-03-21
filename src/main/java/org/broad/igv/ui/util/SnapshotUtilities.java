@@ -73,6 +73,7 @@ public class SnapshotUtilities {
      */
     private static int maxPanelHeight = DEFAULT_MAX_PANEL_HEIGHT;
     private static int panelWidth = 1920;
+    private static double cex = 1.0;
 
     public static int getMaxPanelHeight() {
         return maxPanelHeight;
@@ -80,6 +81,12 @@ public class SnapshotUtilities {
     
     public static void setPanelWidth(int w){
 		panelWidth = w;
+	}
+    public static void setCEX(double w){
+		cex = w;
+	}
+    public static double getCEX(){
+		return cex;
 	}
 	public static int getPanelWidth(){
 		return panelWidth;
@@ -94,24 +101,24 @@ public class SnapshotUtilities {
     }
     public static void reportSizing(String reportPrefix, javax.swing.JRootPane jrp, Component component){
 		 UIUtilities.invokeAndWaitOnEventThread(() -> {
-		    log.info("["+reportPrefix+"]:");
-        	log.info("["+reportPrefix+"] jrp.dim     dim("+jrp.getHeight()+"/"+jrp.getWidth()+")");
-            log.info("["+reportPrefix+"] mainPanel   dim("+((MainPanel) component).getHeight()+"/"+((MainPanel) component).getWidth()+")");
-            log.info("["+reportPrefix+"] applicPanel dim("+((MainPanel) component).applicationHeaderPanel.getHeight()+"/"+((MainPanel) component).applicationHeaderPanel.getWidth()+")");
+		    log.debug("["+reportPrefix+"]:");
+        	log.debug("["+reportPrefix+"] jrp.dim     dim("+jrp.getHeight()+"/"+jrp.getWidth()+")");
+            log.debug("["+reportPrefix+"] mainPanel   dim("+((MainPanel) component).getHeight()+"/"+((MainPanel) component).getWidth()+")");
+            log.debug("["+reportPrefix+"] applicPanel dim("+((MainPanel) component).applicationHeaderPanel.getHeight()+"/"+((MainPanel) component).applicationHeaderPanel.getWidth()+")");
 		});
 	}
     public static void reportSizingNoThread(String reportPrefix, javax.swing.JRootPane jrp, Component component){
-		    log.info("["+reportPrefix+"]:");
-        	log.info("["+reportPrefix+"] jrp.dim     dim("+jrp.getHeight()+"/"+jrp.getWidth()+")");
-            log.info("["+reportPrefix+"] mainPanel   dim("+((MainPanel) component).getHeight()+"/"+((MainPanel) component).getWidth()+")");
-            log.info("["+reportPrefix+"] applicPanel dim("+((MainPanel) component).applicationHeaderPanel.getHeight()+"/"+((MainPanel) component).applicationHeaderPanel.getWidth()+")");
+		    log.debug("["+reportPrefix+"]:");
+        	log.debug("["+reportPrefix+"] jrp.dim     dim("+jrp.getHeight()+"/"+jrp.getWidth()+")");
+            log.debug("["+reportPrefix+"] mainPanel   dim("+((MainPanel) component).getHeight()+"/"+((MainPanel) component).getWidth()+")");
+            log.debug("["+reportPrefix+"] applicPanel dim("+((MainPanel) component).applicationHeaderPanel.getHeight()+"/"+((MainPanel) component).applicationHeaderPanel.getWidth()+")");
 	}
 
 
     public static String doComponentSnapshot(Component component, File file, SnapshotFileChooser.SnapshotFileType type, boolean paintOffscreen) throws IOException {
-        log.info("DEBUG-doComponentSnapshot(): component.getheight/width: "+component.getHeight()+"/"+component.getWidth());
+        log.debug("DEBUG-doComponentSnapshot(): component.getheight/width: "+component.getHeight()+"/"+component.getWidth());
         javax.swing.JRootPane jrp = org.broad.igv.ui.IGV.getRootPane();
-        log.info("DEBUG-doComponentSnapshot(): jrp.getheight/width: "+jrp.getHeight()+"/"+jrp.getWidth());
+        log.debug("DEBUG-doComponentSnapshot(): jrp.getheight/width: "+jrp.getHeight()+"/"+jrp.getWidth());
         //TODO Should really make this work for more components
         if (paintOffscreen && !(component instanceof Paintable)) {
             log.error("Component cannot be painted offscreen. Performing onscreen paint");
@@ -128,7 +135,7 @@ public class SnapshotUtilities {
           	  jrp.setBounds(rect);
             reportSizingNoThread("01-JRP size set",jrp,component);
             
-            log.info("component IS MainPanel!");
+            log.debug("component IS MainPanel!");
             	rect.x = 0;
            	 	rect.y = 0;
            		rect.width = getPanelWidth();
@@ -555,16 +562,18 @@ public class SnapshotUtilities {
 
     private static void exportScreenshotPNG(Component target, File selectedFile, int width, int height, boolean paintOffscreen) throws IOException {
         log.info("exportScreenshotPNG(P1)...");
-
+        
         String format = "png";
         selectedFile = fixFileExt(selectedFile, new String[]{format}, format);
         Rectangle rect = new Rectangle(0, 0, width, height);
         log.info("exportScreenshotPNG(P2)...");
 
-        BufferedImage bufImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        BufferedImage bufImg = new BufferedImage((int) Math.round(width*cex), (int) Math.round(height*cex), BufferedImage.TYPE_INT_RGB);
         log.info("exportScreenshotPNG(P3)...");
 
         Graphics2D g = bufImg.createGraphics();
+        log.info("exportScreenshotPNG(P3.5)...");
+        g.scale(cex,cex);
         log.info("exportScreenshotPNG(P4)...");
         paintImage(target,g,width,height,paintOffscreen);
         log.info("exportScreenshotPNG(P5)...");
