@@ -168,6 +168,8 @@ public class CommandExecutor {
                 return this.setSamplingWindowSize(param1);
             } else if (cmd.equalsIgnoreCase("maxdepth") || (cmd.equalsIgnoreCase("samplingreadcount"))) {
                 return this.setSamplingReadCount(param1);
+			} else if (cmd.equalsIgnoreCase("noDownsampling")){
+				return this.setSamplingOff();
             } else if (cmd.equalsIgnoreCase("setSleepInterval")) {
                 return this.setSleepInterval(param1);
             } else if (cmd.equalsIgnoreCase("setCredentials")) {
@@ -310,6 +312,13 @@ public class CommandExecutor {
         }
         return "OK";
     }
+
+
+    private String setSamplingOff() {
+            PreferencesManager.getPreferences().override(Constants.SAM_DOWNSAMPLE_READS, "false");
+            return "OK";
+    }
+
 
     private String setSamplingWindowSize(String windowSize) {
         try {

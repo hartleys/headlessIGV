@@ -157,24 +157,24 @@ public class MainPanel extends JPanel implements Paintable {
     }
     @Override
     public void revalidate() {
-		log.debug("MainPanel.revalidate(P1): [MainPanelDim: "+this.getWidth()+" / "+this.getHeight()+"]");
+		log.info("MainPanel.revalidate(P1): [MainPanelDim: "+this.getWidth()+" / "+this.getHeight()+"]");
 		super.revalidate();
-		log.debug("MainPanel.revalidate(P2): [MainPanelDim: "+this.getWidth()+" / "+this.getHeight()+"]");
+		log.info("MainPanel.revalidate(P2): [MainPanelDim: "+this.getWidth()+" / "+this.getHeight()+"]");
 	}
 
     @Override
     public void doLayout() {
-		log.debug("MainPanel.doLayout(P1): [MainPanelDim: "+this.getWidth()+" / "+this.getHeight()+"]");
+		log.info("MainPanel.doLayout(P1): [MainPanelDim: "+this.getWidth()+" / "+this.getHeight()+"]");
         layoutFrames();
         super.doLayout();
-		log.debug("MainPanel.doLayout(P2): [MainPanelDim: "+this.getWidth()+" / "+this.getHeight()+"]");
+		log.info("MainPanel.doLayout(P2): [MainPanelDim: "+this.getWidth()+" / "+this.getHeight()+"]");
         applicationHeaderPanel.doLayout();
-		log.debug("MainPanel.doLayout(P3): [MainPanelDim: "+this.getWidth()+" / "+this.getHeight()+"]");
+		log.info("MainPanel.doLayout(P3): [MainPanelDim: "+this.getWidth()+" / "+this.getHeight()+"]");
 
         for (TrackPanel tp : getTrackPanels()) {
             tp.getScrollPane().doLayout();
         }
-		log.debug("MainPanel.doLayout(P4): [MainPanelDim: "+this.getWidth()+" / "+this.getHeight()+"]");
+		log.info("MainPanel.doLayout(P4): [MainPanelDim: "+this.getWidth()+" / "+this.getHeight()+"]");
 
     }
 
@@ -442,23 +442,23 @@ public class MainPanel extends JPanel implements Paintable {
     public void layoutFrames() {
         synchronized (getTreeLock()) {
             
-            log.debug("layoutFrames(): MainPanelDim: "+this.getWidth()+" / "+this.getHeight());
+            log.info("layoutFrames(): MainPanelDim: "+this.getWidth()+" / "+this.getHeight());
             
             Insets insets = applicationHeaderPanel.getInsets();
             namePanelX = insets.left;
             
             attributePanelX = namePanelX + namePanelWidth + hgap;
             attributePanelWidth = calculateAttributeWidth();
-            log.debug("layoutFrames(): attributePanelX: "+attributePanelX+" / attributePanelWidth: "+attributePanelWidth);
+            log.info("layoutFrames(): attributePanelX: "+attributePanelX+" / attributePanelWidth: "+attributePanelWidth);
             dataPanelX = attributePanelX + attributePanelWidth + hgap;
-            log.debug("layoutFrames(): dataPanelX: "+dataPanelX);
+            log.info("layoutFrames(): dataPanelX: "+dataPanelX);
 
             java.util.List<ReferenceFrame> frames = FrameManager.getFrames();
             dataPanelWidth = applicationHeaderPanel.getWidth() - insets.right - dataPanelX;
             //dataPanelWidth = 1729;
-            log.debug( "layoutFrames(): applicationHeaderPanel.getWidth: "+applicationHeaderPanel.getWidth()+", insets.right: "+insets.right );
+            log.info( "layoutFrames(): applicationHeaderPanel.getWidth: "+applicationHeaderPanel.getWidth()+", insets.right: "+insets.right );
 
-            log.debug( "layoutFrames(): dataPanelWidth: "+dataPanelWidth );
+            log.info( "layoutFrames(): dataPanelWidth: "+dataPanelWidth );
 
             if (frames.size() == 1) {
                 frames.get(0).setBounds(0, dataPanelWidth);

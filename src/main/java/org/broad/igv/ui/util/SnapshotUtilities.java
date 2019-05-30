@@ -101,17 +101,17 @@ public class SnapshotUtilities {
     }
     public static void reportSizing(String reportPrefix, javax.swing.JRootPane jrp, Component component){
 		 UIUtilities.invokeAndWaitOnEventThread(() -> {
-		    log.debug("["+reportPrefix+"]:");
-        	log.debug("["+reportPrefix+"] jrp.dim     dim("+jrp.getHeight()+"/"+jrp.getWidth()+")");
-            log.debug("["+reportPrefix+"] mainPanel   dim("+((MainPanel) component).getHeight()+"/"+((MainPanel) component).getWidth()+")");
-            log.debug("["+reportPrefix+"] applicPanel dim("+((MainPanel) component).applicationHeaderPanel.getHeight()+"/"+((MainPanel) component).applicationHeaderPanel.getWidth()+")");
+		    log.info("["+reportPrefix+"]:");
+        	log.info("["+reportPrefix+"] jrp.dim     dim("+jrp.getHeight()+"/"+jrp.getWidth()+")");
+            log.info("["+reportPrefix+"] mainPanel   dim("+((MainPanel) component).getHeight()+"/"+((MainPanel) component).getWidth()+")");
+            log.info("["+reportPrefix+"] applicPanel dim("+((MainPanel) component).applicationHeaderPanel.getHeight()+"/"+((MainPanel) component).applicationHeaderPanel.getWidth()+")");
 		});
 	}
     public static void reportSizingNoThread(String reportPrefix, javax.swing.JRootPane jrp, Component component){
-		    log.debug("["+reportPrefix+"]:");
-        	log.debug("["+reportPrefix+"] jrp.dim     dim("+jrp.getHeight()+"/"+jrp.getWidth()+")");
-            log.debug("["+reportPrefix+"] mainPanel   dim("+((MainPanel) component).getHeight()+"/"+((MainPanel) component).getWidth()+")");
-            log.debug("["+reportPrefix+"] applicPanel dim("+((MainPanel) component).applicationHeaderPanel.getHeight()+"/"+((MainPanel) component).applicationHeaderPanel.getWidth()+")");
+		    log.info("["+reportPrefix+"]:");
+        	log.info("["+reportPrefix+"] jrp.dim     dim("+jrp.getHeight()+"/"+jrp.getWidth()+")");
+            log.info("["+reportPrefix+"] mainPanel   dim("+((MainPanel) component).getHeight()+"/"+((MainPanel) component).getWidth()+")");
+            log.info("["+reportPrefix+"] applicPanel dim("+((MainPanel) component).applicationHeaderPanel.getHeight()+"/"+((MainPanel) component).applicationHeaderPanel.getWidth()+")");
 	}
 
 
